@@ -20,7 +20,7 @@ BOT_ID = auth["user_id"]
 # print(f"auth_response == {auth}")
 # payload --> all message details
 message_counts = {}
-# store this memory
+# store this in memory
 
 @slack_adapter.on('message') # adding a new end-point
 def message(payload):
@@ -51,6 +51,5 @@ def message_count():
     return Response() , 200
 
 
-# print("ahla bik")
 if __name__ == "__main__":
     app.run(debug=True , port=5000 )    
