@@ -1,0 +1,43 @@
+
+{ "name":"payload response bot ",
+  "token": "NSjYrq1vrkLP5C2gUpQo93Ah",
+  "team_id": "T02RXANN24F",
+  "api_app_id": "A02RXARUNET",
+  "event": {
+    "client_msg_id": "6e9175e1-2450-4cf2-8136-a50bfad3839c",
+    "type": "message",
+    "text": "helllps",
+    "user": "U02T1LTBV6U",
+    "ts": "1640986599.003500",
+    "team": "T02RXANN24F",
+    "blocks": [
+      {
+        "type": "rich_text",
+        "block_id": "Sdt",
+        "elements": [
+          {
+            "type": "rich_text_section",
+            "elements": [{ "type": "text", "text": "helllps" }]
+          }
+        ]
+      }
+    ],
+    "channel": "C02SBULS0G2",
+    "event_ts": "1640986599.003500",
+    "channel_type": "channel"
+  },
+  "type": "event_callback",
+  "event_id": "Ev02SFMCKJJY",
+  "event_time": 1640986599,
+  "authorizations": [
+    {
+      "enterprise_id": "None",
+      "team_id": "T02RXANN24F",
+      "user_id": "U02RXBN1VSB",
+      "is_bot": "True",
+      "is_enterprise_install": "False"
+    }
+  ],
+  "is_ext_shared_channel": "False",
+  "event_context": "4-eyJldCI6Im1lc3NhZ2UiLCJ0aWQiOiJUMDJSWEFOTjI0RiIsImFpZCI6IkEwMlJYQVJVTkVUIiwiY2lkIjoiQzAyU0JVTFMwRzIifQ"
+}

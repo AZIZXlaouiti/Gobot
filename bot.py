@@ -1,9 +1,10 @@
-import os 
+import os
+from flask.wrappers import Response 
 from slack import WebClient
 from dotenv import load_dotenv
 from pathlib import Path 
 from slackeventsapi import SlackEventAdapter
-from flask import Flask
+from flask import Flask , request , Request
 env_path = Path('.')/'.env'
 load_dotenv(dotenv_path = env_path)
 
@@ -14,22 +15,42 @@ slack_adapter = SlackEventAdapter(os.environ['SIGN_SECRET'],'/slack/events',app)
 
 client = WebClient(token = os.environ['SLACK_TOKEN'])
 # calling slack api and retrieving the slack_bot_id
-BOT_ID = client.api_call("auth.test")["user_id"] 
+auth = client.api_call("auth.test")
+BOT_ID = auth["user_id"]
+# print(f"auth_response == {auth}")
 # payload --> all message details
-@slack_adapter.on('message')
+message_counts = {}
+# store this memory
+
+@slack_adapter.on('message') # adding a new end-point
 def message(payload):
+    # print(f"payload == {payload}")
     event = payload.get('event' , {}) # look for the key ['event'] if not return {}
     channel_id = event.get('channel') # get message related channel
-    client_id  = event.get('user') # get message related user(client)
+    user_id  = event.get('user') # get message related user(client)
     text = event.get('text') # get message content
     
-    if BOT_ID != client_id : # avoiding message/recieve conflict
+    if BOT_ID != user_id : # avoiding message/recieve conflict
+        if user_id in message_counts:
+            message_counts[user_id] += 1
+        else :
+            message_counts[user_id] = 1
+
         client.chat_postMessage(
             channel=channel_id,
             text= f"text recieved : {text}"
             )
 
-    
+@app.route('/message-count' , methods=['POST']) 
+def message_count():
+    data = request.form
+    user_id =  data.get('user_id')
+    channel_id = data.get('channel_id')
+    message_count = message_counts.get(user_id, 0)
+    client.chat_postMessage(channel=channel_id , text= f'Message: {message_count}')
+    return Response() , 200
+
+
 # print("ahla bik")
 if __name__ == "__main__":
     app.run(debug=True , port=5000 )    
