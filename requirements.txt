@@ -1,0 +1,2 @@
+python-dotenv==0.19.2
+slackclient==2.9.3
