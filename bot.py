@@ -49,12 +49,12 @@ def message(payload):
             message_counts[user_id] += 1
         else :
             message_counts[user_id] = 1
-        if text.lower() == 'move':
+        if text == f'<@{BOT_ID}> move':
             try: 
                 # send direct message (DM)
                 client.chat_postMessage(
                     channel=user_id,
-                    text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community!"
+                    text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
                 )
 
                 # print(result)
@@ -68,7 +68,7 @@ def message(payload):
                 thread_ts=message_ts,
                 text=f"<@{user_id}> Hello again :robot_face:"
             )      
-            
+            print(f'text == {text}')
 
 @app.route('/message-count' , methods=['POST']) 
 def message_count():
@@ -82,5 +82,5 @@ def message_count():
     return Response() , 200
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True , port=5000 )    
