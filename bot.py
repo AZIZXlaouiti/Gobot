@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from pathlib import Path 
 from slackeventsapi import SlackEventAdapter
 from flask import Flask , request , Request
+from slack_sdk.errors import SlackApiError
 
 env_path = Path('.')/'.env'
 load_dotenv(dotenv_path = env_path)
@@ -48,12 +49,12 @@ def message(payload):
             message_counts[user_id] += 1
         else :
             message_counts[user_id] = 1
-        if text.lower() == 'start':
+        if text.lower() == 'move':
             try: 
                 # send direct message (DM)
                 client.chat_postMessage(
                     channel=user_id,
-                    text=f'Hello again :wave: your message was "{text}"'
+                    text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community!"
                 )
 
                 # print(result)
@@ -65,7 +66,7 @@ def message(payload):
             client.chat_postMessage(
                 channel=channel_id,
                 thread_ts=message_ts,
-                text=f"<@{user_id}> Hello again :robot_face: your message was {text}"
+                text=f"<@{user_id}> Hello again :robot_face:"
             )      
             
 
