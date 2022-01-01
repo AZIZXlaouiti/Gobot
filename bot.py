@@ -51,24 +51,29 @@ def message(payload):
             message_counts[user_id] = 1
         if text == f'<@{BOT_ID}> move':
             try: 
+                client.chat_delete(
+                    channel=channel_id ,
+                    ts=message_ts
+                )
                 # send direct message (DM)
                 client.chat_postMessage(
                     channel=user_id,
                     text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
                 )
-
+                
                 # print(result)
 
-            except :
-                print(f"Error:")
+            except SlackApiError as e:
+                print(f"Error:  {e}")
         else : 
             # reply in thread
-            client.chat_postMessage(
-                channel=channel_id,
-                thread_ts=message_ts,
-                text=f"<@{user_id}> Hello again :robot_face:"
-            )      
-            print(f'text == {text}')
+            # client.chat_postMessage(
+            #     channel=channel_id,
+            #     thread_ts=message_ts,
+            #     text=f"<@{user_id}> Hello again :robot_face:"
+            # )      
+            # print(f'text == {text}')
+            return
 
 @app.route('/message-count' , methods=['POST']) 
 def message_count():

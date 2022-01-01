@@ -1,0 +1,37 @@
+_metadata:
+  major_version: 1
+  minor_version: 1
+display_information:
+  name: slack-bot_v1
+  description: customizable bot to move post between channels
+  background_color: "#333436"
+features:
+  bot_user:
+    display_name: slack-bot_v1
+    always_online: false
+  slash_commands:
+    - command: /message-count
+      url: https://a42d-73-200-216-189.ngrok.io/message-count
+      description: return your message count
+      usage_hint: "#channel"
+      should_escape: false
+oauth_config:
+  scopes:
+    user:
+      - chat:write
+    bot:
+      - channels:history
+      - chat:write
+      - commands
+      - groups:history
+      - im:history
+      - im:write
+      - chat:write.public
+settings:
+  event_subscriptions:
+    request_url: https://a42d-73-200-216-189.ngrok.io/slack/events
+    bot_events:
+      - message.channels
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
