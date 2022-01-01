@@ -16,6 +16,8 @@ slack_wb_client = WebClient(token=os.environ['SLACK_TOKEN_U']) # using the clien
 
 slack_wb_bot = WebClient(token = os.environ['SLACK_TOKEN_B']) # using the bot 
 
+BOT_ID = slack_wb_bot.api_call("auth.test")["user_id"]
+
 MESSAGE_BLOCK = {
     "type": "section",
     "text":{
@@ -24,23 +26,34 @@ MESSAGE_BLOCK = {
     }
 }
 # https://api.slack.com/events  ---> api events methods
+# https://api.slack.com/methods ---> api methods
 @slack_ev_adapter.on("message")
 def message(payload):
     event = payload.get("event", {})
-    
+    user_id = event.get("user")
+    channel_id = event.get("channel")
     text = event.get("text") # listen for every message posted
-    if "flip a coin" in text.lower():
-        channel_id = event.get("channel")
-        rand_int = random.randint(0 , 1)
-        if rand_int == 0 : 
-            result = "head"
-        else :
-            result = "tails"
-        message = f"the result is {result}" 
-
+    message_ts = event.get('ts')
+    if f'<@{BOT_ID}> move' in text:
+        message = f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
+        
         MESSAGE_BLOCK["text"]["text"] = message       
-        message_to_send = {"channel": channel_id, "blocks":[MESSAGE_BLOCK]}
-        return slack_wb_bot.chat_postMessage(**message_to_send)
+        
+        message_to_send = {"channel": user_id, "blocks":[MESSAGE_BLOCK]}
+        
+        return slack_wb_bot.chat_postMessage(
+           **message_to_send 
+        )
+    elif  BOT_ID != user_id : 
+        
+        message = f"<@{user_id}> Hello again :robot_face:"
+        MESSAGE_BLOCK["text"]["text"] = message       
+        
+        message_to_send = {"channel": channel_id,"thread_ts":message_ts, "blocks":[MESSAGE_BLOCK]}
+        
+        return slack_wb_bot.chat_postMessage(
+           **message_to_send 
+        )
 
 @app.route('/')
 def welcome():
