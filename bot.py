@@ -18,8 +18,15 @@ slack_adapter = SlackEventAdapter(os.environ['SIGN_SECRET'],'/slack/events',app)
 client = WebClient(token = os.environ['SLACK_TOKEN_U'])
 bot = WebClient(token = os.environ['SLACK_TOKEN_B'])
 # calling slack api and retrieving the slack_bot_id
-auth = bot.api_call("auth.test")
-BOT_ID = auth["user_id"]
+auth_user = client.api_call("auth.test")
+auth_bot = bot.api_call("auth.test")
+
+print(f"botside ==>  {auth_bot}")
+print(f"userside ==> {auth_user}")
+
+BOT_ID = auth_bot["user_id"]
+
+# print(BOT_ID)
 # print(f"auth_response == {auth}")
 # payload --> all message details
 message_counts = {}
@@ -45,36 +52,31 @@ def message(payload):
     user_id  = event.get('user') # get message related user(client)
     text = event.get('text') # get message content
     message_ts = event.get('ts')
-    if user_id != None and  BOT_ID != user_id : # avoiding message/recieve conflict ensuring the bot did not send the message
-        if user_id in message_counts:
-            message_counts[user_id] += 1
-        else :
-            message_counts[user_id] = 1
-        if text == f'<@{BOT_ID}> move':
-            try: 
-                client.chat_delete(
-                    channel=channel_id ,
-                    ts=message_ts
-                )
-                # send direct message (DM)
-                bot.chat_postMessage(
+    if  BOT_ID != user_id : # avoiding message/recieve conflict ensuring the bot did not send the message
+            if user_id in message_counts:
+                message_counts[user_id] += 1
+            else :
+                message_counts[user_id] = 1
+            if text == f'<@{BOT_ID}> move':
+                try: 
+                    # send direct message (DM)
+                     bot.chat_postMessage(
                     channel=user_id,
                     text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
-                )
-                
-                # print(result)
+                     )
 
-            except SlackApiError as e:
-                print(f"Error:  {e}")
-        else : 
-            # reply in thread
-            # client.chat_postMessage(
-            #     channel=channel_id,
-            #     thread_ts=message_ts,
-            #     text=f"<@{user_id}> Hello again :robot_face:"
-            # )      
-            # print(f'text == {text}')
-            return
+                    # print(result)
+
+                except SlackApiError as e:
+                    print(f"Error:  {e}")
+            else : 
+                # reply in thread
+                # client.chat_postMessage(
+                #     channel=channel_id,
+                #     thread_ts=message_ts,
+                #     text=f"<@{user_id}> Hello again :robot_face: "
+                # )      
+                print('hello')
 
 @app.route('/message-count' , methods=['POST']) 
 def message_count():
@@ -87,6 +89,9 @@ def message_count():
         )
     return Response() , 200
 
+@app.route('/')
+def welcome():
+    return 'oops.. there is nothing here for you to see!!'
 
 if __name__ == '__main__':
     app.run(debug=True , port=5000 )    
