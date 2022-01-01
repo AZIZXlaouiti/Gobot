@@ -1,8 +1,9 @@
 import os
 from flask.wrappers import Response 
-from slack import WebClient
+from slack import WebClient 
 from dotenv import load_dotenv
 from pathlib import Path 
+
 from slackeventsapi import SlackEventAdapter
 from flask import Flask , request , Request
 env_path = Path('.')/'.env'
@@ -30,17 +31,30 @@ def message(payload):
     user_id  = event.get('user') # get message related user(client)
     text = event.get('text') # get message content
     message_ts = event.get('ts')
-    if user_id != None and  BOT_ID != user_id : # avoiding message/recieve conflict the bot did not send the message
+    if user_id != None and  BOT_ID != user_id : # avoiding message/recieve conflict ensuring the bot did not send the message
         if user_id in message_counts:
             message_counts[user_id] += 1
         else :
             message_counts[user_id] = 1
         if text.lower() == 'start':
+            try: 
+                # send direct message
+                result = client.chat_postMessage(
+                    channel=user_id,
+                    text=f"Hello again :wave: your message was{text}"
+                )
+
+                # print(result)
+
+            except :
+                print(f"Error:")
+        else : 
+            # reply in thread
             client.chat_postMessage(
                 channel=channel_id,
                 thread_ts=message_ts,
-                text= f"@{user_id} hello",
-                )
+                text=f"Hello again :wave: your message was{text}"
+            )      
             
 
 @app.route('/message-count' , methods=['POST']) 
