@@ -15,9 +15,10 @@ app = Flask(__name__)
 # adding a slack endpoint
 slack_adapter = SlackEventAdapter(os.environ['SIGN_SECRET'],'/slack/events',app)
 
-client = WebClient(token = os.environ['SLACK_TOKEN'])
+client = WebClient(token = os.environ['SLACK_TOKEN_U'])
+bot = WebClient(token = os.environ['SLACK_TOKEN_B'])
 # calling slack api and retrieving the slack_bot_id
-auth = client.api_call("auth.test")
+auth = bot.api_call("auth.test")
 BOT_ID = auth["user_id"]
 # print(f"auth_response == {auth}")
 # payload --> all message details
@@ -56,7 +57,7 @@ def message(payload):
                     ts=message_ts
                 )
                 # send direct message (DM)
-                client.chat_postMessage(
+                bot.chat_postMessage(
                     channel=user_id,
                     text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
                 )
@@ -81,7 +82,7 @@ def message_count():
     user_id =  data.get('user_id')
     channel_id = data.get('channel_id')
     message_count = message_counts.get(user_id, 0)
-    client.chat_postMessage(
+    bot.chat_postMessage(
         channel=channel_id , text= f'Message: {message_count}'
         )
     return Response() , 200
