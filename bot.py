@@ -29,17 +29,19 @@ def message(payload):
     channel_id = event.get('channel') # get message related channel
     user_id  = event.get('user') # get message related user(client)
     text = event.get('text') # get message content
-    
-    if BOT_ID != user_id : # avoiding message/recieve conflict
+    message_ts = event.get('ts')
+    if user_id != None and  BOT_ID != user_id : # avoiding message/recieve conflict the bot did not send the message
         if user_id in message_counts:
             message_counts[user_id] += 1
         else :
             message_counts[user_id] = 1
-
-        client.chat_postMessage(
-            channel=channel_id,
-            text= f"text recieved : {text}"
-            )
+        if text.lower() == 'start':
+            client.chat_postMessage(
+                channel=channel_id,
+                thread_ts=message_ts,
+                text= f"@{user_id} hello",
+                )
+            
 
 @app.route('/message-count' , methods=['POST']) 
 def message_count():
@@ -47,7 +49,9 @@ def message_count():
     user_id =  data.get('user_id')
     channel_id = data.get('channel_id')
     message_count = message_counts.get(user_id, 0)
-    client.chat_postMessage(channel=channel_id , text= f'Message: {message_count}')
+    client.chat_postMessage(
+        channel=channel_id , text= f'Message: {message_count}'
+        )
     return Response() , 200
 
 
