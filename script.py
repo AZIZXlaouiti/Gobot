@@ -5,10 +5,12 @@ from dotenv import load_dotenv
 from pathlib import Path 
 from slackeventsapi import SlackEventAdapter
 from flask import Flask , request , Request
+
 env_path = Path('.')/'.env'
 load_dotenv(dotenv_path = env_path)
 
 app = Flask(__name__)
+
 # setting event endpoint
 slack_ev_adapter = SlackEventAdapter(os.environ['SIGN_SECRET'],'/slack/events',app)
 
@@ -25,6 +27,7 @@ MESSAGE_BLOCK = {
         "text":""
     }
 }
+# print(f"channel ==> {slack_wb_bot.conversations_list()}")
 # https://api.slack.com/events  ---> api events methods
 # https://api.slack.com/methods ---> api methods
 @slack_ev_adapter.on("message")
