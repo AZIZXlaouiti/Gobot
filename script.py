@@ -28,9 +28,8 @@ MESSAGE_BLOCK = {
         "text":""
     }
 }
-#<#{re.compile("C02S91GQBGV"|"C02SBULS0G2"|"C02SE7XSS76")}>'
+
 # <#C02S91GQBGV|general> <#C02SBULS0G2|random> <#C02SE7XSS76|software-engineering>
-# print(f"channel ==> {slack_wb_bot.conversations_list()}")
 CHANNELS = slack_wb_bot.conversations_list()["channels"] # [{}]
 
 
@@ -40,10 +39,10 @@ for e in CHANNELS:
         tmp = "("+ f"{e['id']}"+ "\|" +f"{e['name']}"+")"
     else :    
         tmp = tmp + "|" + "("+ f"{e['id']}"+ "\|" +f"{e['name']}"+")"
-print(tmp)
+
 ptr = f'^<.*> move <#({tmp})>'   
 p = re.compile(ptr)   
-# C02S91GQBGV|C02SBULS0G2|C02SE7XSS76     
+
 # https://api.slack.com/events  ---> api events methods
 # https://api.slack.com/methods ---> api methods
 @slack_ev_adapter.on("message")

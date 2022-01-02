@@ -1,5 +1,5 @@
 ## description 
-this is my attempt to make a slack_bot 
+Sample Python Slackbot app for App Platform
 ### how to use 
 #### in development: 
 - run `pip install -r requirements.txt`
