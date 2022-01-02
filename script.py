@@ -1,5 +1,6 @@
 import os
 import random
+import re
 from slack import WebClient 
 from dotenv import load_dotenv
 from pathlib import Path 
@@ -27,7 +28,22 @@ MESSAGE_BLOCK = {
         "text":""
     }
 }
+#<#{re.compile("C02S91GQBGV"|"C02SBULS0G2"|"C02SE7XSS76")}>'
+# <#C02S91GQBGV|general> <#C02SBULS0G2|random> <#C02SE7XSS76|software-engineering>
 # print(f"channel ==> {slack_wb_bot.conversations_list()}")
+CHANNELS = slack_wb_bot.conversations_list()["channels"] # [{}]
+
+
+tmp = ''
+for e in CHANNELS:
+    if tmp == '' :
+        tmp = "("+ f"{e['id']}"+ "\|" +f"{e['name']}"+")"
+    else :    
+        tmp = tmp + "|" + "("+ f"{e['id']}"+ "\|" +f"{e['name']}"+")"
+print(tmp)
+ptr = f'^<.*> move <#({tmp})>'   
+p = re.compile(ptr)   
+# C02S91GQBGV|C02SBULS0G2|C02SE7XSS76     
 # https://api.slack.com/events  ---> api events methods
 # https://api.slack.com/methods ---> api methods
 @slack_ev_adapter.on("message")
@@ -37,7 +53,9 @@ def message(payload):
     channel_id = event.get("channel")
     text = event.get("text") # listen for every message posted
     message_ts = event.get('ts')
-    if f'<@{BOT_ID}> move' in text:
+    print(f'text ==> {text}')
+    if p.match(text):
+
         message = f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
         
         MESSAGE_BLOCK["text"]["text"] = message       
