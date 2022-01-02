@@ -141,15 +141,12 @@ def move_post():
     p = json.loads(payload)
     message = ''
     if p["type"] == "view_submission":
+        channel_id = list(p['view']['state']['values'].values())[1]['channels']['selected_channels'][0]
         slack_wb_bot.chat_postMessage(
-        channel='C02SBULS0G2',
+        channel=channel_id,
         text='moving this post to another channel'
         )
-        
-        # channel_id = p['view']['state']['values']['OKr4']['channels']['selected_channels'][0]
-        print(p['view']['state']['values'])
-        
-       
+        # print(channel_id)
     elif p["type"] == "message_action":
         trigger_id = p['trigger_id']
         slack_wb_bot.views_open(
