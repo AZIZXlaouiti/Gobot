@@ -1,0 +1,47 @@
+{
+  "type": "message_action",
+  "token": "NSjYrq1vrkLP5C2gUpQo93Ah",
+  "action_ts": "1641161065.964820",
+  "team": { "id": "T02RXANN24F", "domain": "slack-bot-mover" },
+  "user": {
+    "id": "U02T1LTBV6U",
+    "username": "azizrocke",
+    "team_id": "T02RXANN24F",
+    "name": "azizrocke"
+  },
+  "channel": { "id": "C02SE7XSS76", "name": "software-engineering" },
+  "is_enterprise_install": "False",
+  "enterprise": "None",
+  "callback_id": "move_action",
+  "trigger_id": "2884828082807.2881362750151.0366377012a7baf0857a8c7f311eda79",
+  "response_url": "https://hooks.slack.com/app/T02RXANN24F/2901734417604/Dg8Ptx1DjSSRwwAM8OUhY2S9",
+  "message_ts": "1641147989.000500",
+  "message": {
+    "client_msg_id": "1204b4eb-6b4a-471f-a3f7-db275a580a39",
+    "type": "message",
+    "text": "hekkojf",
+    "user": "U02T1LTBV6U",
+    "ts": "1641147989.000500",
+    "team": "T02RXANN24F",
+    "blocks": [
+      {
+        "type": "rich_text",
+        "block_id": "djwgH",
+        "elements": [
+          {
+            "type": "rich_text_section",
+            "elements": [{ "type": "text", "text": "hekkojf" }]
+          }
+        ]
+      }
+    ],
+    "thread_ts": "1641147989.000500",
+    "reply_count": 1,
+    "reply_users_count": 1,
+    "latest_reply": "1641147990.000600",
+    "reply_users": ["U02RXBN1VSB"],
+    "is_locked": "False",
+    "subscribed": "True",
+    "last_read": "1641147990.000600"
+  }
+}

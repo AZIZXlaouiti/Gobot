@@ -1,47 +1,104 @@
 {
-  "type": "message_action",
-  "token": "NSjYrq1vrkLP5C2gUpQo93Ah",
-  "action_ts": "1641151545.753467",
+  "type": "view_submission",
   "team": { "id": "T02RXANN24F", "domain": "slack-bot-mover" },
   "user": {
     "id": "U02T1LTBV6U",
     "username": "azizrocke",
-    "team_id": "T02RXANN24F",
-    "name": "azizrocke"
+    "name": "azizrocke",
+    "team_id": "T02RXANN24F"
   },
-  "channel": { "id": "C02SE7XSS76", "name": "software-engineering" },
-  "is_enterprise_install": false,
-  "enterprise": null,
-  "callback_id": "move_action",
-  "trigger_id": "2892642338166.2881362750151.6a6d46ca4db23a62b6c9197fa22ba022",
-  "response_url": "https://hooks.slack.com/app/T02RXANN24F/2899315851746/oK1CIdfHg83WC2cEVdcwVvQi",
-  "message_ts": "1641147989.000500",
-  "message": {
-    "client_msg_id": "1204b4eb-6b4a-471f-a3f7-db275a580a39",
-    "type": "message",
-    "text": "hekkojf",
-    "user": "U02T1LTBV6U",
-    "ts": "1641147989.000500",
-    "team": "T02RXANN24F",
+  "api_app_id": "A02RXARUNET",
+  "token": "NSjYrq1vrkLP5C2gUpQo93Ah",
+  "trigger_id": "2892755101494.2881362750151.0c1fdf415c28bf5ebf49bf6d37cd3bd3",
+  "view": {
+    "id": "V02S0Q27ANB",
+    "team_id": "T02RXANN24F",
+    "type": "modal",
     "blocks": [
       {
-        "type": "rich_text",
-        "block_id": "djwgH",
+        "type": "input",
+        "block_id": "+gO",
+        "label": { "type": "plain_text", "text": "Title", "emoji": "True" },
+        "optional": "False",
+        "dispatch_action": "False",
+        "element": {
+          "type": "plain_text_input",
+          "action_id": "title",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "What do you want to ask of the world?",
+            "emoji": "True"
+          },
+          "dispatch_action_config": {
+            "trigger_actions_on": ["on_enter_pressed"]
+          }
+        }
+      },
+      {
+        "type": "input",
+        "block_id": "OKr4",
+        "label": {
+          "type": "plain_text",
+          "text": "Channel(s)",
+          "emoji": "True"
+        },
+        "optional": "False",
+        "dispatch_action": "False",
+        "element": {
+          "type": "multi_channels_select",
+          "action_id": "channels",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Where should the poll be sent?",
+            "emoji": "True"
+          }
+        }
+      },
+      {
+        "type": "actions",
+        "block_id": "q8ND",
         "elements": [
           {
-            "type": "rich_text_section",
-            "elements": [{ "type": "text", "text": "hekkojf" }]
+            "type": "button",
+            "action_id": "add_option",
+            "text": {
+              "type": "plain_text",
+              "text": "Add another option  ",
+              "emoji": "True"
+            }
           }
         ]
       }
     ],
-    "thread_ts": "1641147989.000500",
-    "reply_count": 1,
-    "reply_users_count": 1,
-    "latest_reply": "1641147990.000600",
-    "reply_users": ["U02RXBN1VSB"],
-    "is_locked": false,
-    "subscribed": true,
-    "last_read": "1641147990.000600"
-  }
+    "private_metadata": "",
+    "callback_id": "",
+    "state": {
+      "values": {
+        "+gO": {
+          "title": { "type": "plain_text_input", "value": "this is my post" }
+        },
+        "OKr4": {
+          "channels": {
+            "type": "multi_channels_select",
+            "selected_channels": ["C02SE7XSS76"]
+          }
+        }
+      }
+    },
+    "hash": "1641160337.3Tw51rZu",
+    "title": { "type": "plain_text", "text": "Modal Title", "emoji": "True" },
+    "clear_on_close": "False",
+    "notify_on_close": "False",
+    "close": "None",
+    "submit": { "type": "plain_text", "text": "Submit", "emoji": "True" },
+    "previous_view_id": "None",
+    "root_view_id": "V02S0Q27ANB",
+    "app_id": "A02RXARUNET",
+    "external_id": "",
+    "app_installed_team_id": "T02RXANN24F",
+    "bot_id": "B02SQKB2NJD"
+  },
+  "response_urls": [],
+  "is_enterprise_install": "False",
+  "enterprise": "None"
 }
