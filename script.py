@@ -1,6 +1,8 @@
 import os
 import random
 import re
+import json
+from flask.wrappers import Response
 from slack import WebClient 
 from dotenv import load_dotenv
 from pathlib import Path 
@@ -54,7 +56,8 @@ def message(payload):
     message_ts = event.get('ts')
     print(f'text ==> {text}')
     if p.match(text):
-
+        # forword = '/[^]<#.*>[^]/gi'
+        
         message = f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
         
         MESSAGE_BLOCK["text"]["text"] = message       
@@ -74,6 +77,48 @@ def message(payload):
         return slack_wb_bot.chat_postMessage(
            **message_to_send 
         )
+
+@app.route('/slack/move-post' , methods=['POST']) 
+def move_post():
+    data = request.form
+    user_id =  data.get('payload')
+    p = json.loads(user_id)
+    print(p['trigger_id'])
+    # slack_wb_bot.views_open(
+    #         trigger_id=trigger_id,
+    #         view={
+    #             "type": "modal",
+    #             "title": {"type": "plain_text", "text": "My App"},
+    #             "close": {"type": "plain_text", "text": "Close"},
+    #             "blocks": [
+    #                 {
+    #                     "type": "section",
+    #                     "text": {
+    #                         "type": "mrkdwn",
+    #                         "text": "About the simplest modal you could conceive of :smile:\n\nMaybe <https://api.slack.com/reference/block-kit/interactive-components|*make the modal interactive*> or <https://api.slack.com/surfaces/modals/using#modifying|*learn more advanced modal use cases*>.",
+    #                     },
+    #                 },
+    #                 {
+    #                     "type": "context",
+    #                     "elements": [
+    #                         {
+    #                             "type": "mrkdwn",
+    #                             "text": "Psssst this modal was designed using <https://api.slack.com/tools/block-kit-builder|*Block Kit Builder*>",
+    #                         }
+    #                     ],
+    #                 },
+    #             ],
+    #         },
+    #     )
+    return Response() , 200
+
+@app.route('/message-count' , methods=['POST']) 
+def message_count():
+    data = request.form
+    user_id =  data.get('user_id')
+    channel_id = data.get('channel_id')
+    print(data)
+    return Response() , 200
 
 @app.route('/')
 def welcome():
