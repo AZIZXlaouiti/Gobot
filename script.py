@@ -163,7 +163,7 @@ def move_post():
             )
         message_to_move = p['message']['text']
          
-        # print(p['message']['text'])   
+        print(p)   
     return make_response("", 200)
 
 
