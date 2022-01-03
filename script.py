@@ -87,7 +87,7 @@ MESSAGE_BLOCK = {
         "text":""
     }
 }
-MESSAGE_TO_MOVE = {}
+message_to_move = []
 # <#C02S91GQBGV|general> <#C02SBULS0G2|random> <#C02SE7XSS76|software-engineering>
 CHANNELS = slack_wb_bot.conversations_list()["channels"] # [{}]
 
@@ -139,25 +139,32 @@ def move_post():
     data = request.form
     payload =  data.get('payload')
     p = json.loads(payload)
-    message = ''
+    global message_to_move
     if p["type"] == "view_submission":
         channel_id = list(p['view']['state']['values'].values())[1]['channels']['selected_channels'][0]
         slack_wb_bot.chat_postMessage(
         channel=channel_id,
-        text='moving this post to another channel'
+        blocks=[
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": message_to_move
+			}
+		}
+	]
         )
-        # print(channel_id)
+
     elif p["type"] == "message_action":
         trigger_id = p['trigger_id']
         slack_wb_bot.views_open(
                 trigger_id=trigger_id,
                 view= MODAL
             )
-        message = p['message']['blocks']  
-           
-    # print(p)    
+        message_to_move = p['message']['text']
+         
+        # print(p['message']['text'])   
     return make_response("", 200)
-
 
 
 @app.route('/message-count' , methods=['POST']) 
