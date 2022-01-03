@@ -1,3 +1,4 @@
+![Discord](https://user-images.githubusercontent.com/79036942/147900523-0007d251-fe8f-4f1e-bf24-188c49134021.png)
 ## description 
 Sample Python Slackbot app for App Platform
 ### how to use 
@@ -8,3 +9,4 @@ Sample Python Slackbot app for App Platform
 - coming soon ...
 #### common bugs : 
 - do not try and double post a post that was already posted by the GoBot , doing so will result in `This content can't be displayed.` message
+
