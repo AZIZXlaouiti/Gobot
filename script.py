@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from pathlib import Path 
 from slackeventsapi import SlackEventAdapter
 from flask import Flask , request , Request
+from slack_sdk.errors import SlackApiError
 
 env_path = Path('.')/'.env'
 load_dotenv(dotenv_path = env_path)
@@ -27,7 +28,7 @@ BOT_ID = slack_wb_bot.api_call("auth.test")["user_id"]
 MODAL = {
 	"title": {
 		"type": "plain_text",
-		"text": "Modal Title"
+		"text": "Give Task"
 	},
 	"submit": {
 		"type": "plain_text",
@@ -97,7 +98,7 @@ def message(payload):
     user_id = event.get("user")
     channel_id = event.get("channel")
     text = event.get("text") # listen for every message posted
-    message_ts = event.get('ts') # '1641181687.004200
+    message_ts = event.get('ts') # '1641181687.004200'
     # print(f"messag_id ==> {message_ts}") # essag_id ==> 1641181687.004200
 #     if p.match(text):
 #         # forword = '/[^]<#.*>[^]/gi'
@@ -129,29 +130,33 @@ def move_post():
     global message_to_move , message_ts , user_id
     if p["type"] == "view_submission":
         channel_id = list(p['view']['state']['values'].values())[0]['channels']['selected_channels'][0]
-        # posting the message to the specified channel in the modal 
-        slack_wb_bot.chat_postMessage(
-        channel=channel_id,
-        blocks=[
-		{
-			"type": "section",
-			"text": {
-				"type": "mrkdwn",
-				"text":f'<@{user_id}> {message_to_move}'
-			}
-		},
-        
-	      ]
-        )
-        # sending DM to notify the original owner
-        slack_wb_bot.chat_postMessage(
-            channel=user_id ,
-            text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
-        )
-        slack_wb_bot.chat_delete(
-            channel=channel_id ,
-            ts=message_ts,
-        )
+        try:
+            # posting the message to the specified channel in the modal 
+            slack_wb_bot.chat_postMessage(
+            channel=channel_id,
+            blocks=[
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text":f'<@{user_id}> {message_to_move}'
+                }
+            },
+            
+            ]
+            )
+            # sending DM to notify the original owner
+            slack_wb_bot.chat_postMessage(
+                channel=user_id ,
+                text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
+            )
+            slack_wb_bot.chat_delete(
+                channel=channel_id ,
+                ts='1641181687.004200',
+            )
+        except SlackApiError as e:
+            print(f'Error: {e}')
+
 
     elif p["type"] == "message_action":
         trigger_id = p['trigger_id']
