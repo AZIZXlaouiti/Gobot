@@ -151,8 +151,9 @@ def move_post():
 				"type": "mrkdwn",
 				"text": message_to_move
 			}
-		}
-	]
+		},
+        
+	      ]
         )
 
     elif p["type"] == "message_action":
@@ -163,7 +164,7 @@ def move_post():
             )
         message_to_move = p['message']['text']
          
-        print(p)   
+        # print(p)   
     return make_response("", 200)
 
 
