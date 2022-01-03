@@ -24,7 +24,7 @@ slack_wb_bot = WebClient(token = os.environ['SLACK_TOKEN_B']) # using the bot
 
 BOT_ID = slack_wb_bot.api_call("auth.test")["user_id"]
 
-MODAL ={
+MODAL = {
 	"title": {
 		"type": "plain_text",
 		"text": "Modal Title"
@@ -37,26 +37,11 @@ MODAL ={
 		{
 			"type": "input",
 			"element": {
-				"type": "plain_text_input",
-				"action_id": "title",
-				"placeholder": {
-					"type": "plain_text",
-					"text": "What do you want to ask of the world?"
-				}
-			},
-			"label": {
-				"type": "plain_text",
-				"text": "Title"
-			}
-		},
-		{
-			"type": "input",
-			"element": {
 				"type": "multi_channels_select",
 				"action_id": "channels",
 				"placeholder": {
 					"type": "plain_text",
-					"text": "Where should the poll be sent?"
+					"text": "Where should the post be sent?"
 				}
 			},
 			"label": {
@@ -88,6 +73,8 @@ MESSAGE_BLOCK = {
     }
 }
 message_to_move = []
+message_ts = ''
+user_id = ''
 # <#C02S91GQBGV|general> <#C02SBULS0G2|random> <#C02SE7XSS76|software-engineering>
 CHANNELS = slack_wb_bot.conversations_list()["channels"] # [{}]
 
@@ -110,38 +97,39 @@ def message(payload):
     user_id = event.get("user")
     channel_id = event.get("channel")
     text = event.get("text") # listen for every message posted
-    message_ts = event.get('ts')
-    #print(f'message ==> {message_ts}') #1641161637.003000
-    if p.match(text):
-        # forword = '/[^]<#.*>[^]/gi'
+    message_ts = event.get('ts') # '1641181687.004200
+    # print(f"messag_id ==> {message_ts}") # essag_id ==> 1641181687.004200
+#     if p.match(text):
+#         # forword = '/[^]<#.*>[^]/gi'
         
-        message = f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
+#         message = f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
         
-        MESSAGE_BLOCK["text"]["text"] = message       
+#         MESSAGE_BLOCK["text"]["text"] = message       
         
-        message_to_send = {"channel": user_id, "blocks":[MESSAGE_BLOCK]}
+#         message_to_send = {"channel": user_id, "blocks":[MESSAGE_BLOCK]}
         
-        return slack_wb_bot.chat_postMessage(
-           **message_to_send 
-        )
-    elif  BOT_ID != user_id : 
-        message = f"<@{user_id}> Hello again :robot_face:"
-        MESSAGE_BLOCK["text"]["text"] = message       
+#         return slack_wb_bot.chat_postMessage(
+#            **message_to_send 
+#         )
+#     elif  BOT_ID != user_id : 
+#         message = f"<@{user_id}> Hello again :robot_face:"
+#         MESSAGE_BLOCK["text"]["text"] = message       
         
-        message_to_send = {"channel": channel_id,"thread_ts":message_ts, "blocks":[MESSAGE_BLOCK]}
+#         message_to_send = {"channel": channel_id,"thread_ts":message_ts, "blocks":[MESSAGE_BLOCK]}
         
-        return slack_wb_bot.chat_postMessage(
-           **message_to_send 
-        )
+#         return slack_wb_bot.chat_postMessage(
+#            **message_to_send 
+#         )
 
 @app.route('/slack/move-post' , methods=['POST']) 
 def move_post():
     data = request.form
     payload =  data.get('payload')
     p = json.loads(payload)
-    global message_to_move
+    global message_to_move , message_ts , user_id
     if p["type"] == "view_submission":
-        channel_id = list(p['view']['state']['values'].values())[1]['channels']['selected_channels'][0]
+        channel_id = list(p['view']['state']['values'].values())[0]['channels']['selected_channels'][0]
+        # posting the message to the specified channel in the modal 
         slack_wb_bot.chat_postMessage(
         channel=channel_id,
         blocks=[
@@ -149,22 +137,35 @@ def move_post():
 			"type": "section",
 			"text": {
 				"type": "mrkdwn",
-				"text": message_to_move
+				"text":f'<@{user_id}> {message_to_move}'
 			}
 		},
         
 	      ]
         )
+        # sending DM to notify the original owner
+        slack_wb_bot.chat_postMessage(
+            channel=user_id ,
+            text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
+        )
+        slack_wb_bot.chat_delete(
+            channel=channel_id ,
+            ts=message_ts,
+        )
 
     elif p["type"] == "message_action":
         trigger_id = p['trigger_id']
+        message_ts = p['message_ts']
+        user_id = p['message']['user']
+
         slack_wb_bot.views_open(
                 trigger_id=trigger_id,
                 view= MODAL
             )
         message_to_move = p['message']['text']
          
-        # print(p)   
+        # print(f"user_id ==> {user_id}") 
+        print(p)  
     return make_response("", 200)
 
 
