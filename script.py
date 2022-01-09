@@ -78,7 +78,9 @@ MESSAGE_BLOCK = {
 message_to_move = []
 message_ts = ''
 user_id = ''
-channel_id2= ''
+channel_id2 = ''
+thread_ts2 = ''
+client_msg_id = ''
 # <#C02S91GQBGV|general> <#C02SBULS0G2|random> <#C02SE7XSS76|software-engineering>
 CHANNELS = slack_wb_bot.conversations_list()["channels"]  # [{}]
 
@@ -133,50 +135,99 @@ def move_post():
     data = request.form
     payload = data.get('payload')
     p = json.loads(payload)
-    global message_to_move, message_ts, user_id , channel_id2
+    global message_to_move, message_ts, thread_ts2, user_id, channel_id2, client_msg_id
     if p["type"] == "view_submission":
         channel_id = list(p['view']['state']['values'].values())[
-            0]['channels']['selected_channels'][0]
+            0]['channels']['selected_channels'][0]  # take the first modal option input and pick and apply change to the first element
         try:
             # posting the message to the specified channel in the modal
-            slack_wb_bot.chat_postMessage(
-                channel=channel_id,
-                blocks=[
+            # slack_wb_bot.chat_postMessage(
+            #     channel=channel_id,
+            #     blocks=[
+            #         {
+            #             "type": "section",
+            #             "text": {
+            #                 "type": "mrkdwn",
+            #                 "text": f'<@{user_id}> {message_to_move}'
+            #             }
+            #         },
+
+            #     ]
+            # )
+            replies = slack_wb_bot.conversations_replies(channel=channel_id2,
+               ts=thread_ts2
+            )
+            for message in replies["messages"]:
+                user_id = message["user"]
+                block = message['blocks']
+                text = message['text']
+                if client_msg_id == message["client_msg_id"]:
+                    slack_wb_bot.chat_postMessage(
+                        channel=channel_id,
+                        blocks=[
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": f'<@{user_id}> {message_to_move}'
+                            "text": f'<@{user_id}> {text}'
                         }
                     },
 
-                ]
-            )
+                         ]
+                    )
+                    slack_wb_client.chat_delete(
+                        channel=channel_id2,
+                        ts=message['ts'],
+                    )
+                else:
+                    # print(f"found me => {message['thread_ts']}")
+                    slack_wb_bot.chat_postMessage(
+                    channel=channel_id,
+                    thread_ts=message['thread_ts'],
+                    ts=message['ts'],
+                    blocks=[
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": f'{text}'
+                        }
+                    },
+
+                ])
+                    # sucessful deletion
+                    slack_wb_client.chat_delete(
+                        channel=channel_id2,
+                        ts=message['ts'],
+                    )
+                print(f'id ==> {client_msg_id == message["client_msg_id"]}')
             # sending DM to notify the original owner
-            slack_wb_bot.chat_postMessage(
-                channel=user_id,
-                text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
-            )
-            slack_wb_client.chat_delete(
-                channel=channel_id2,
-                ts=message_ts,
-            )
+            # slack_wb_bot.chat_postMessage(
+            #     channel=user_id,
+            #     text=f"<@{user_id}>, your post has been moved to a better channel! <#{channel_id}> Thanks for participating in Tech Career Growth community! :wave:"
+            # )
+            
+            # slack_wb_client.chat_delete(
+            #     channel=channel_id2,
+            #     ts=message_ts,
+            # )
+            print('')
         except SlackApiError as e:
             print(f'Error: {e}')
 
     elif p["type"] == "message_action":
+
         trigger_id = p['trigger_id']
         message_ts = p['message_ts']
         user_id = p['message']['user']
         channel_id2 = p["channel"]["id"]
+        thread_ts2 = p["message"]["thread_ts"]
         slack_wb_bot.views_open(
             trigger_id=trigger_id,
             view=MODAL
         )
         message_to_move = p['message']['text']
-
-        # print(f"user_id ==> {user_id}")
-        # print(p)
+        client_msg_id = p["message"]["client_msg_id"]
     return make_response("", 200)
 
 
